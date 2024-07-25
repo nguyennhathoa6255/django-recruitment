@@ -1,4 +1,4 @@
-# Nền tảng tuyển dụng 
+# Ứng dụng Django nền tảng tuyển dụng 
 - Mục đích sử dụng: Ứng dụng web được tạo nhằm mục đích xem độ phù hợp của hồ sơ ứng viên (Resume) và mô tả công việc của nhà tuyển dụng (Job Description) từ đó có thể cải thiện hồ sơ của ứng viên. 
 
 - Ngoài chức năng Resume Matcher (xem độ phù hợp của Resume) thì ứng dụng web này còn mô phỏng đầy đủ các chức năng của một nền tảng tuyển dụng khi có sự tương tác của ứng viên và nhà tuyển dụng.
