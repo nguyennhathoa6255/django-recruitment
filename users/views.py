@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
-
+from django.core.files.storage import default_storage
+from django.conf import settings
 
 
 def register(request):
@@ -42,3 +43,9 @@ def profile(request):
 
     return render(request, 'users/profile.html', context)
 
+@login_required
+def get_profile_image(profile):
+    if profile.image and default_storage.exists(profile.image.path):
+        return profile.image.url
+    else:
+        return settings.MEDIA_URL + 'default.jpg'
