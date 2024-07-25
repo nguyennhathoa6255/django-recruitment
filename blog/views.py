@@ -155,20 +155,23 @@ class PostDetailView(DetailView):
         elif 'apply' in request.POST:
             # Handle Apply functionality
             if 'resume' in request.FILES:
-                resume = Resume(post=self.object, resume=request.FILES['resume'])
-                resume.save()
+                resume_file = request.FILES['resume']
+                resume_submission = Resume(
+                    post=self.object,
+                    resume=resume_file,
+                    user=request.user  # Set the user who submitted the resume
+                )
+                resume_submission.save()
+
+                # Increment the application count
+                self.object.application_count += 1
+                self.object.save()
+
                 context['applied'] = True
                 return self.render_to_response(context)
-            
-            # Save the resume submission to the database
-            resume_submission = Resume(post=self.object, resume=resume, user=request.user)
-            resume_submission.save()
-
-            # Increment the application count
-            self.object.application_count += 1
-            self.object.save()
 
         return self.render_to_response(context)
+
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
     template_name = 'blog/post_form.html'
@@ -190,7 +193,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def test_func(self):
         post = self.get_object()
-        if self.request.user == post.author:
+        if self.request.user == post.author or self.request.user.is_superuser:
             return True
         return False
 
@@ -210,7 +213,12 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 def about(request):
     return render(request, 'blog/about.html', {'title': 'About'})
 
+# def post_resumes(request, pk):
+#     post = get_object_or_404(Post, pk=pk)
+#     resumes = post.resumes.all()
+#     return render(request, 'blog/post_resumes.html', {'post': post, 'resumes': resumes})
+
 def post_resumes(request, pk):
     post = get_object_or_404(Post, pk=pk)
-    resumes = post.resumes.all()
+    resumes = Resume.objects.filter(post=pk)
     return render(request, 'blog/post_resumes.html', {'post': post, 'resumes': resumes})

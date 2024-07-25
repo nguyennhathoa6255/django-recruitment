@@ -6,8 +6,10 @@
     <ul class="list-group">
         {% for resume in resumes %}
         <li class="list-group-item">
-            <a href="{{ resume.resume.url }}" download>{{ resume.resume.name }}</a> 
+            <a href="{{ resume.resume.url }}" download>{{ resume.resume.name }}</a>
             <span class="text-muted">Uploaded at: {{ resume.uploaded_at|date:"F d, Y H:i" }}</span>
+            <br>
+            <span><strong>Applicant:</strong> {{ resume.user.username }}</span> <!-- Display applicant's username -->
         </li>
         {% empty %}
         <li class="list-group-item">No resumes submitted for this post.</li>

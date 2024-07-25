@@ -12,7 +12,7 @@ class Post(models.Model):
     location = models.CharField(max_length=255)  # Add default value here
     date_posted = models.DateTimeField(default=timezone.now)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    
+    application_count = models.PositiveIntegerField(default=0)
     def __str__(self):
         return self.title
     
@@ -28,6 +28,7 @@ class Resume(models.Model):
     resume = models.FileField(null=True, blank=True, upload_to='resumes')
     uploaded_at = models.DateTimeField(auto_now_add=True)
     application_count = models.PositiveIntegerField(default=0)  # New field to track applications
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
     def __str__(self):
