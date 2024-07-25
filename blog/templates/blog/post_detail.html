@@ -1,0 +1,107 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+<div class="jumbotron mt-3 shadow-lg">
+    <article class="media content-section shadow">
+        <a href="{{ object.author.profile.image.url }}" target="_blank">
+            <img src="{{ object.author.profile.image.url }}" alt="{{ object.author.username }}" class="article-img rounded-circle img-thumbnail img-fluid shadow">
+        </a>
+        <div class="media-body">
+            <h2>{{ object.title }}</h2>
+            <div class="article-metadata d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-center">
+                    <a class="mr-2" href="{% url 'user-posts' object.author.username %}">
+                        <h5>{{ object.author }}</h5>
+                    </a>
+                    <medium class="text-muted">{{ object.date_posted|date:"F d, Y" }}</medium>
+                </div>
+                
+                <!-- Buttons for the post author -->
+                {% if user == object.author %}
+                <div class="d-flex mt-2">
+                    <a href="{% url 'post-update' object.pk %}" class="btn btn-outline-success mr-2">
+                        <i class="fas fa-edit"></i> Update Post
+                    </a>
+                    <a href="{% url 'post-resumes' object.pk %}" class="btn btn-outline-success">
+                        <i class="fas fa-eye"></i> View Resumes
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+            <p><strong>Location:</strong> {{ object.location }}</p>
+            <p class="article-content"><strong>Job Description:</strong></p>
+            <p class="article-content">{{ object.content }}</p>
+
+            {% if object.file %}
+                <div>
+                    {% if object.extension == '.jpg' or object.extension == '.jpeg' or object.extension == '.png' %}
+                        <a href="{{ object.file.url }}" download>
+                            <img src="{{ object.file.url }}" alt="" class="img-fluid">
+                        </a>
+                        <a href="{{ object.file.url }}" download class="text-dark">
+                            <h5>{{ object.file.name }}</h5>
+                        </a>
+                    {% elif object.extension == '.mp4' %}
+                        <div class="embed-responsive embed-responsive-16by9">
+                            <video id="video-1_html_api" class="vjs-tech" preload="auto" autoplay>
+                                <source src="{{ object.file.url }}" type="video/mp4" class="embed-responsive">
+                            </video>
+                        </div>
+                        <a href="{{ object.file.url }}" download class="text-dark">
+                            <h5>{{ object.file.name }}</h5>
+                        </a>
+                    {% else %}
+                        <a href="{{ object.file.url }}" download class="text-dark">
+                            <h5>{{ object.file.name }}</h5>
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            <!-- Forms for non-authors -->
+            {% if user != object.author %}
+            <div class="mt-4">
+                <h4 class="card-title">Apply for this Job</h4>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="jd" value="{{ object.content }}">
+                    <div class="form-group">
+                        <label for="apply_resume" class="font-weight-bold">Upload Resume:</label>
+                        <input type="file" class="form-control-file" id="apply_resume" name="resume" accept="application/pdf" required>
+                    </div>
+                    <button type="submit" class="btn btn-outline-success" name="apply">Apply</button>
+                </form>
+
+                {% if applied %}
+                    <div class="mt-3">
+                        <h2>Application Submitted</h2>
+                        <p>Your resume has been submitted for this job.</p>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="mt-4">
+                <h4 class="card-title">Resume Matcher</h4>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="jd" value="{{ object.content }}">
+                    <div class="form-group">
+                        <label for="resume_matcher_resume" class="font-weight-bold">Upload Resume:</label>
+                        <input type="file" class="form-control-file" id="resume_matcher_resume" name="resume" accept="application/pdf" required>
+                    </div>
+                    <button type="submit" class="btn btn-outline-success" name="resume_matcher">Resume Matcher</button>
+                </form>
+
+                {% if response_data %}
+                    <div class="mt-3">
+                        <h2>Result:</h2>
+                        <p>{{ response_data.result }}</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            {% endif %}
+        </div>
+    </article>
+</div>
+{% endblock content %}

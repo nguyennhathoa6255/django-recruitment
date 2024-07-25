@@ -1,0 +1,17 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+<div class="container mt-3">
+    <h1>Resumes for {{ post.title }}</h1>
+    <ul class="list-group">
+        {% for resume in resumes %}
+        <li class="list-group-item">
+            <a href="{{ resume.resume.url }}" download>{{ resume.resume.name }}</a> 
+            <span class="text-muted">Uploaded at: {{ resume.uploaded_at|date:"F d, Y H:i" }}</span>
+        </li>
+        {% empty %}
+        <li class="list-group-item">No resumes submitted for this post.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
